@@ -19,6 +19,7 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 ## 第一次 `_zend_mm_alloc_int()` 调用过程：
 
 第一次调用 `_zend_mm_alloc_int()` 是为PHP的执行分配预留空间。其过程如下：
+
 1. 使用 `ZEND_MM_SMALL_SIZE(size)` 判断是否小块内存（显然不是）。
 2. 调用 `zend_mm_search_large_block()` 在大块内存列表中查找合适的。显然找不到，因为此时 ZendMM 尚未向操作系统申请任何内存。
 3. 程序转入 Storage 逻辑，向操作系统申请大块内存。
