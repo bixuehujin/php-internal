@@ -664,6 +664,7 @@ static void *_zend_mm_alloc_int(zend_mm_heap *heap, size_t size ZEND_FILE_LINE_D
 			zend_mm_safe_error(heap, "Allowed memory size of %ld bytes exhausted at %s:%d (tried to allocate %lu bytes)", heap->limit, __zend_filename, __zend_lineno, size);
 		}
 
+		/*分配段存储空间*/
 		segment = (zend_mm_segment *) ZEND_MM_STORAGE_ALLOC(segment_size);
 
 		if (!segment) {
@@ -677,6 +678,8 @@ out_of_memory:
 		}
 
 		heap->real_size += segment_size;
+
+		// 设置内存使用峰值，为最大的 real_size
 		if (heap->real_size > heap->real_peak) {
 			heap->real_peak = heap->real_size;
 		}
@@ -757,7 +760,7 @@ static void _zend_mm_free_int(zend_mm_heap *heap, void *p ZEND_FILE_LINE_DC ZEND
 	memset(ZEND_MM_DATA_OF(mm_block), 0x5a, mm_block->debug.size);
 
 
-
+	// 如果所释放的内存是小块内存，且当前缓存大小没有操作 ZEND_MM_CACHE_SIZE（sizeof(size_t) << 3 * 4 * 1024）64*4K 时，将释放的内存插入缓存列表。
 	if (EXPECTED(ZEND_MM_SMALL_SIZE(size)) && EXPECTED(heap->cached < ZEND_MM_CACHE_SIZE)) {
 		size_t index = ZEND_MM_BUCKET_INDEX(size);
 		zend_mm_free_block **cache = &heap->cache[index];
