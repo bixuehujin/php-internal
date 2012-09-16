@@ -6,9 +6,9 @@ ZendMM内存管理器将使用后的内存并不立即返还给操作系统，�
 
 
 ## 配置：
-USE_ZEND_ALLOC		是否使用 ZendMM 进行内存管理。
-ZEND_MM_SEG_SIZE 	指定分配段大小，默认 256K。
-ZEND_MM_MEM_TYPE 	指定内存分配的方案，默认 malloc。
+* USE_ZEND_ALLOC		是否使用 ZendMM 进行内存管理。
+* ZEND_MM_SEG_SIZE 	指定分配段大小，默认 256K。
+* ZEND_MM_MEM_TYPE 	指定内存分配的方案，默认 malloc。
 
 ## 启动过程内存分配：
 1. 为 `zend_mm_storage` 分配内存
