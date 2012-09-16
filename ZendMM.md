@@ -11,8 +11,8 @@ ZendMM内存管理器将使用后的内存并不立即返还给操作系统，�
 * ZEND_MM_MEM_TYPE 	指定内存分配的方案，默认 malloc。
 
 ## 启动过程内存分配：
-1. 为 `zend_mm_storage` 分配内存
-2. 为 `zend_mm_heap` 分配内存
+1. 为 `struct zend_mm_storage` 分配内存
+2. 为 `struct zend_mm_heap` 分配内存
 3. 通过 `_zend_mm_alloc_int()` 一次性分配 `ZEND_MM_RESERVE_SIZE + ZEND_MM_SEG_SIZE` 大小的内存。
 
 
@@ -24,14 +24,14 @@ ZendMM内存管理器将使用后的内存并不立即返还给操作系统，�
 
 
 ## 调用流程
-1. main
-2. php_[cli]_startup
-3. php_module_startup
-4. zend_startup
-5. start_memory_manager
-6. alloc_globals_ctor
-7. zend_mm_startup
-8. zend_mm_startup_ex
+1. `main`
+2. `php_[cli]_startup`
+3. `php_module_startup`
+4. `zend_startup`
+5. `start_memory_manager`
+6. `alloc_globals_ctor`
+7. `zend_mm_startup`
+8. `zend_mm_startup_ex`
 
 
 
