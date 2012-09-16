@@ -1202,7 +1202,7 @@ zend_mm_heap *zend_mm_startup_ex(const zend_mm_mem_handlers *handlers, size_t bl
 		exit(255);
 	}
 	heap->storage = storage;
-	heap->block_size = block_size;
+	heap->block_size = block_size;//由 ZEND_MM_SEG_SIZE 环境变量设置，默认 256K。
 	heap->compact_size = 0;
 	heap->segments_list = NULL;
 	zend_mm_init(heap);
@@ -1216,7 +1216,8 @@ zend_mm_heap *zend_mm_startup_ex(const zend_mm_mem_handlers *handlers, size_t bl
 	heap->peak = 0;
 	heap->internal = internal;
 	heap->reserve = NULL;
-	heap->reserve_size = reserve_size;
+	heap->reserve_size = reserve_size; // 设为 ZEND_MM_RESERVE_SIZE 宏所指定大小
+
 	if (reserve_size > 0) {
 		heap->reserve = _zend_mm_alloc_int(heap, reserve_size ZEND_FILE_LINE_CC ZEND_FILE_LINE_EMPTY_CC);
 	}
@@ -1434,4 +1435,43 @@ size_t _zend_mem_block_size(void *ptr TSRMLS_DC ZEND_FILE_LINE_DC ZEND_FILE_LINE
 	}
 	return _zend_mm_block_size(AG(mm_heap), ptr ZEND_FILE_LINE_RELAY_CC ZEND_FILE_LINE_ORIG_RELAY_CC);
 }
+
+
+
+
+/******************************/
+/* my functions for study use */
+/******************************/
+
+
+zend_mm_heap * zend_get_global_heap() {
+	return alloc_globals.mm_heap;
+}
+
+
+void zend_mm_print_heap_info() {
+	zend_mm_heap * heap = zend_get_global_heap();
+	printf("heap reserve size  : %ld\n", heap->reserve_size);
+	printf("heap block size    : %ld\n", heap->block_size);
+	printf("heap compact size  : %ld\n", heap->compact_size);
+	printf("use zend alloc     : %d\n", heap->use_zend_alloc);
+	printf("heap real peak     : %ld\n", heap->real_peak);
+	printf("heap real size     : %ld\n", heap->real_size);
+	printf("heap size          : %ld\n", heap->size);
+	printf("heap peak          : %ld\n", heap->peak);
+	printf("heap cached        : %d\n", heap->cached);
+	printf("heap limit         : %ld\n", heap->limit);
+	printf("heap internal      : %ld\n", heap->internal);
+}
+
+
+
+void zend_mm_aligned_test(size_t size) {
+	printf("ZEND_MM_ALIGNMENT       :%ld\n", ZEND_MM_ALIGNMENT);
+	printf("ZEND_MM_ALIGNMENT_MASK  :%ld\n", ZEND_MM_ALIGNMENT_MASK);
+	printf("ZEND_MM_ALIGNMENT_SIZE  :%ld\n", ZEND_MM_ALIGNED_SIZE(size));
+	printf("ZEND_MM_TRUE_SIZE       :%ld\n", ZEND_MM_TRUE_SIZE(size));
+}
+
+
 

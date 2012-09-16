@@ -17,30 +17,9 @@
 int main(void) {
 
 	start_memory_manager();
-	char * a = emalloc(10);
-	sprintf(a, "%s", "abc");
-
-	char * p;
-	ctimer_t timer, *ptimer;
-	ptimer = ctimer_init(&timer);
-	ctimer_start(ptimer);
-	int i = 100000;
-	while(i --) {
-		p = malloc(i);
-		free(p);
-	}
-	ctimer_stop(ptimer);
-	printf("used %lu\n", ctimer_last_runtime(ptimer));
-
-	ctimer_clean(ptimer);
-	ctimer_start(ptimer);
-	i = 100000;
-	while(i --) {
-		p = emalloc(i);
-		efree(p);
-	}
-	ctimer_stop(ptimer);
-	printf("used %lu\n", ctimer_last_runtime(ptimer));
-
+	char * p = emalloc(56	 * 1027);
+	efree(p);
+	zend_mm_print_heap_info();
+	zend_mm_aligned_test(2);
 	return 0;
 }
