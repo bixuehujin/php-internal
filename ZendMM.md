@@ -34,10 +34,16 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 
 
 ## 常用宏说明
+* ZEND_MM_NUM_BUCKETS
+		#define ZEND_MM_NUM_BUCKETS 		(sizeof(size_t) << 3)
+	sizeof(size_t)在32位平台为4，64位平台下为8，所以 ZEND_MM_NUM_BUCKET 为32或63字节。
+
 
 * ZEND_MM_SMALL_SIZE(true_size)
+		#define ZEND_MM_SMALL_SIZE(true_size)	(true_size < ZEND_MM_MAX_SMALL_SIZE)
+		#define ZEND_MM_MAX_SMALL_SIZE			((ZEND_MM_NUM_BUCKETS<<ZEND_MM_ALIGNMENT_LOG2)+ZEND_MM_ALIGNED_MIN_HEADER_SIZE)
 
-判断所给 true_size 大小的内存是否属于小块内存。
+判断所给 true_size 大小的内存是否属于小块内存。ZendMM 将小于 ZEND_MM_MAX_SMALL_SIZE 大小内存的视为小内存。以ZEND_MM_NUM_BUCKETS为64，ZEND_MM_ALIGNMENT_LOG2为3为例：ZEND_MM_MAX_SMALL_SIZE 的大小为 64 * 2^3 + ZEND_MM_ALIGNED_MIN_HEADER_SIZE。
 
 * ZEND_MM_BUCKET_INDEX(true_size)
 
@@ -111,6 +117,19 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 		};
 
 
+## zend_mm_block
+
+zend_mm_block_info
+zend_mm_block
+
+zend_mm_block, zend_mm_small_free_block 和 zend_mm_free_block 三者都以 zend_mm_block_info 为第一成员，debug 模式下均有 magic 成员。
+
+* zend_mm_small_free_block 与 zend_mm_free_block
+zend_mm_small_free_block 为双向链表，zend_mm_free_block 为双向链表和键树的混合结构。他们都有共同的成员 zend_mm_block_info。在 debug 模式下 magic 成员。
+* zend_mm_block
+在debug模式下有 magic 和 debug 成员。
+
+
 
 
 		/* mm block type */
@@ -119,19 +138,6 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 			size_t _size;
 			size_t _prev;
 		} zend_mm_block_info;
-
-
-		/* only for debug */
-		typedef struct _zend_mm_debug_info {
-			const char *filename;
-			uint lineno;
-			const char *orig_filename;
-			uint orig_lineno;
-			size_t size;
-			unsigned int start_magic;
-		} zend_mm_debug_info;
-
-
 
 		typedef struct _zend_mm_block {
 			zend_mm_block_info info;
@@ -157,6 +163,16 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 			struct _zend_mm_free_block *child[2];
 		} zend_mm_free_block;
 
+
+		/* only for debug */
+		typedef struct _zend_mm_debug_info {
+			const char *filename;
+			uint lineno;
+			const char *orig_filename;
+			uint orig_lineno;
+			size_t size;
+			unsigned int start_magic;
+		} zend_mm_debug_info;
 
 
 		typedef struct _zend_mm_heap {
