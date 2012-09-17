@@ -31,6 +31,22 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 
 `ZEND_MM_ALIGNMENT_SIZE(size)` 取得大于等于size最小的一个是 ZEND_MM_ALIGNMENT 倍数的数。
 
+
+
+## 常用宏说明
+
+* ZEND_MM_SMALL_SIZE(true_size)
+
+判断所给 true_size 大小的内存是否属于小块内存。
+
+* ZEND_MM_BUCKET_INDEX(true_size)
+
+根据 true_size 计算小块内存落在的 index。
+
+* ZEND_MM_LARGE_BUCKET_INDEX(true_size)
+
+计算大块内存 index。
+
 >**NOTE**
 >
 

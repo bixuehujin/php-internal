@@ -516,12 +516,26 @@ static zend_mm_free_block *zend_mm_search_large_block(zend_mm_heap *heap, size_t
 	size_t bitmap = heap->large_free_bitmap >> index;
 	zend_mm_free_block *p;
 
+	//判断是否存在一个大于true_size的可用内存已经存在于large_free_buckets, 如果不存在就返回:
 	if (bitmap == 0) {
 		return NULL;
 	}
 
-	if (UNEXPECTED((bitmap & 1) != 0)) {
+	//判断, free_buckets[index]是否存在可用的内存:
+	if (UNEXPECTED((bitmap & 1) != 0)) {//有可用内存
 		/* Search for best "large" free block */
+		/*
+
+		1. 从free_buckets[index]开始, 如果free_buckets[index]当前的内存大小和true_size相等, 则寻找结束, 成功返回.
+
+		2. 查看true_size对应index后(true_size << (ZEND_MM_NUM_BUCKETS - index))的当前最高位, 如果为1.
+		则在free_buckets[index]->child[1]下面继续寻找, 如果free_buckets[index]->child[1]不存在, 则跳出.
+		如果true_size的当前最高位为0, 则在free_buckets[index]->child[0]下面继续寻找,
+		如果free_buckets[index]->child[0]不存在, 则在free_buckets[index]->child[1]下面寻找最小内存
+		(因为此时可以保证, 在free_buckets[index]->child[1]下面的内存都是大于true_size的)
+
+		3. 出发点变更为2中所述的child, 左移一位ture_size.
+		 */
 		zend_mm_free_block *rst = NULL;
 		size_t m;
 		size_t best_size = -1;
@@ -595,6 +609,7 @@ static void *_zend_mm_alloc_int(zend_mm_heap *heap, size_t size ZEND_FILE_LINE_D
 
 	//HANDLE_BLOCK_INTERRUPTIONS();
 
+	// 判断是否为小块内存
 	if (EXPECTED(ZEND_MM_SMALL_SIZE(true_size))) {
 		size_t index = ZEND_MM_BUCKET_INDEX(true_size);
 		size_t bitmap;
@@ -603,7 +618,7 @@ static void *_zend_mm_alloc_int(zend_mm_heap *heap, size_t size ZEND_FILE_LINE_D
 			goto out_of_memory;
 		}
 
-		/* find form cache */
+		/* find form cache *///优先在缓存列表中查找
 		if (EXPECTED(heap->cache[index] != NULL)) {
 			/* Get block from cache */
 			best_fit = heap->cache[index];
@@ -689,8 +704,8 @@ out_of_memory:
 		heap->segments_list = segment;
 
 		best_fit = (zend_mm_free_block *) ((char *) segment + ZEND_MM_ALIGNED_SEGMENT_SIZE);
-		ZEND_MM_MARK_FIRST_BLOCK(best_fit);
-
+		ZEND_MM_MARK_FIRST_BLOCK(best_fit);//标记为新分配segment的第一个内存块
+		//
 		block_size = segment_size - ZEND_MM_ALIGNED_SEGMENT_SIZE - ZEND_MM_ALIGNED_HEADER_SIZE;
 
 		ZEND_MM_LAST_BLOCK(ZEND_MM_BLOCK_AT(best_fit, block_size));
@@ -1474,6 +1489,8 @@ void zend_mm_aligned_test(size_t size) {
 	printf("ZEND_MM_ALIGNMENT_MASK  :%ld\n", ZEND_MM_ALIGNMENT_MASK);
 	printf("ZEND_MM_ALIGNMENT_SIZE  :%ld\n", ZEND_MM_ALIGNED_SIZE(size));
 	printf("ZEND_MM_TRUE_SIZE       :%ld\n", ZEND_MM_TRUE_SIZE(size));
+	printf("ZEND_MM_ALIGNED_SEGMENT_SIZE       :%ld\n", ZEND_MM_ALIGNED_SEGMENT_SIZE);
+
 }
 
 
