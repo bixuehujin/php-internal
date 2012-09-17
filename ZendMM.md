@@ -46,9 +46,9 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 		#define ZEND_MM_ALIGNED_SIZE(size)	(((size) + ZEND_MM_ALIGNMENT - 1) & ZEND_MM_ALIGNMENT_MASK)
 	ZEND_MM_ALIGNMENT 定义在 php_config.h，由系统配置自动生成。宏 ZEND_MM_ALIGNED_SIZE(size) 最终的作用是获取一个大于等于 size 且为 ZEND_MM_ALIGNMENT 倍数的最小的一个数。
 
-> **实现细节**
-> 
-> 
+	> **实现细节**
+	> 
+	> 
 
 * ZEND_MM_SMALL_SIZE(true_size)
 
