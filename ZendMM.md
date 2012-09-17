@@ -75,8 +75,8 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 		#define ZEND_MM_MIN_SIZE	((ZEND_MM_ALIGNED_MIN_HEADER_SIZE > (ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE))
 											? (ZEND_MM_ALIGNED_MIN_HEADER_SIZE - (ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE)) : 0)
 
-
-* ZEND_MM_SMALL_SIZE(true_size) <a id="zend_mm_small_size" name="zend_mm_small_size"/>
+<a name="zend_mm_small_size"/>
+* ZEND_MM_SMALL_SIZE(true_size) 
 
 		#define ZEND_MM_SMALL_SIZE(true_size)	(true_size < ZEND_MM_MAX_SMALL_SIZE)
 		#define ZEND_MM_MAX_SMALL_SIZE			((ZEND_MM_NUM_BUCKETS << ZEND_MM_ALIGNMENT_LOG2) + ZEND_MM_ALIGNED_MIN_HEADER_SIZE)
