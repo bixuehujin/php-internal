@@ -45,15 +45,15 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 		#define ZEND_MM_SMALL_SIZE(true_size)	(true_size < ZEND_MM_MAX_SMALL_SIZE)
 		#define ZEND_MM_MAX_SMALL_SIZE			((ZEND_MM_NUM_BUCKETS<<ZEND_MM_ALIGNMENT_LOG2)+ZEND_MM_ALIGNED_MIN_HEADER_SIZE)
 
-判断所给 true_size 大小的内存是否属于小块内存。ZendMM 将小于 ZEND_MM_MAX_SMALL_SIZE 大小内存的视为小内存。以ZEND_MM_NUM_BUCKETS为64，ZEND_MM_ALIGNMENT_LOG2为3为例：ZEND_MM_MAX_SMALL_SIZE 的大小为 64 * 2^3 + ZEND_MM_ALIGNED_MIN_HEADER_SIZE。
+	判断所给 true_size 大小的内存是否属于小块内存。ZendMM 将小于 ZEND_MM_MAX_SMALL_SIZE 大小内存的视为小内存。以ZEND_MM_NUM_BUCKETS为64，ZEND_MM_ALIGNMENT_LOG2为3为例：ZEND_MM_MAX_SMALL_SIZE 的大小为 64 * 2^3 + ZEND_MM_ALIGNED_MIN_HEADER_SIZE。
 
 * ZEND_MM_BUCKET_INDEX(true_size)
 
-根据 true_size 计算小块内存落在的 index。
+	根据 true_size 计算小块内存落在的 index。
 
 * ZEND_MM_LARGE_BUCKET_INDEX(true_size)
 
-计算大块内存 index。
+	计算大块内存 index。
 
 >**NOTE**
 >
