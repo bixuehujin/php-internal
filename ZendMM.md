@@ -70,6 +70,7 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 															? ZEND_MM_MIN_ALLOC_BLOCK_SIZE : ZEND_MM_ALIGNED_FREE_HEADER_SIZE )
 	最小分配 header size。为 ZEND_MM_ALIGNED_FREE_HEADER_SIZE 和 ZEND_MM_MIN_ALLOC_BLOCK_SIZE 的最大值。
 
+<a name="zend_mm_min_size"/>
 * ZEND_MM_MIN_SIZE
 
 		#define ZEND_MM_MIN_SIZE	((ZEND_MM_ALIGNED_MIN_HEADER_SIZE > (ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE))
@@ -87,7 +88,7 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 
 		#define ZEND_MM_TRUE_SIZE(size)		((size < ZEND_MM_MIN_SIZE) 
 					? (ZEND_MM_ALIGNED_MIN_HEADER_SIZE) : (ZEND_MM_ALIGNED_SIZE(size + ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE)))
-	如果 size 比 ZEND_MM_MIN_SIZE 小，取 ZEND_MM_ALIGNED_MIN_HEADER_SIZE 作为其 true_size，否者取 size 加 ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE 值的最小8的倍数作为值。
+	如果 size 比 [ZEND_MM_MIN_SIZE](#zend_mm_min_size) 小，取 ZEND_MM_ALIGNED_MIN_HEADER_SIZE 作为其 true_size，否者取 size 加 ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE 值的最小8的倍数作为值。
 
 * ZEND_MM_BUCKET_INDEX(true_size)
 
