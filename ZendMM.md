@@ -35,11 +35,13 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 
 ## 常用宏说明
 * ZEND_MM_NUM_BUCKETS
+
 		#define ZEND_MM_NUM_BUCKETS 		(sizeof(size_t) << 3)
 	sizeof(size_t)在32位平台为4，64位平台下为8，所以 ZEND_MM_NUM_BUCKET 为32或63字节。
 
 
 * ZEND_MM_SMALL_SIZE(true_size)
+
 		#define ZEND_MM_SMALL_SIZE(true_size)	(true_size < ZEND_MM_MAX_SMALL_SIZE)
 		#define ZEND_MM_MAX_SMALL_SIZE			((ZEND_MM_NUM_BUCKETS<<ZEND_MM_ALIGNMENT_LOG2)+ZEND_MM_ALIGNED_MIN_HEADER_SIZE)
 
