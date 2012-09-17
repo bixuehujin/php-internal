@@ -34,6 +34,8 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 
 
 ## 常用宏说明
+对 ZendMM 中常用和比较重要的宏予以说明，假设目标机器为64位操作系统。
+
 * ZEND_MM_NUM_BUCKETS
 
 		#define ZEND_MM_NUM_BUCKETS 		(sizeof(size_t) << 3)
@@ -49,6 +51,22 @@ ZendMM 申请每次一大快内存供PHP使用，当申请内存使用完后再�
 	> **实现细节**
 	> 
 	> 
+
+* ZEND_MM_ALIGNED_HEADER_SIZE 和 ZEND_MM_ALIGNED_FREE_HEADER_SIZE
+
+		#define ZEND_MM_ALIGNED_HEADER_SIZE			ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_block))
+		#define ZEND_MM_ALIGNED_FREE_HEADER_SIZE	ZEND_MM_ALIGNED_SIZE(sizeof(zend_mm_small_free_block))
+	分别获取结构 zend_mm_block 和 zend_mm_small_free_block 的对齐大小（aligned size）。
+
+* ZEND_MM_MIN_ALLOC_BLOCK_SIZE
+
+		#define ZEND_MM_MIN_ALLOC_BLOCK_SIZE		ZEND_MM_ALIGNED_SIZE(ZEND_MM_ALIGNED_HEADER_SIZE + END_MAGIC_SIZE)
+	最小分配内存块的大小，它的值为 ZEND_MM_ALIGNED_HEADER_SIZE 的大小加上 sizeof(int) 的对齐大小。
+
+* ZEND_MM_ALIGNED_MIN_HEADER_SIZE
+
+		#define ZEND_MM_ALIGNED_MIN_HEADER_SIZE		(ZEND_MM_MIN_ALLOC_BLOCK_SIZE>ZEND_MM_ALIGNED_FREE_HEADER_SIZE \
+															?ZEND_MM_MIN_ALLOC_BLOCK_SIZE:ZEND_MM_ALIGNED_FREE_HEADER_SIZE)
 
 * ZEND_MM_SMALL_SIZE(true_size)
 
